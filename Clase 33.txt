@@ -1,0 +1,7 @@
+SELECT nombre_real FROM personajes;
+
+SELECT * FROM personajes WHERE nombre_real LIKE 'B%';
+
+SELECT * FROM personajes ORDER BY inteligencia ASC;
+
+SELECT * FROM personajes ORDER BY inteligencia DESC;
