@@ -27,7 +27,13 @@ SELECT e.Puntos_por_partido FROM estadisticas e, jugadores j WHERE e.jugador=j.c
 SELECT e.Puntos_por_partido FROM estadisticas e, jugadores j WHERE e.jugador=j.codigo AND j.Nombre = 'Pau Gasol' AND e.temporada='04/05';
 
 /*10. Mostrar el número de puntos de cada jugador en toda su carrera.*/
-SELECT j.Nombre, SUM(e.Puntos_por_partido) as Puntos FROM estadisticas e, jugadores j WHERE e.jugador=j.codigo GROUP BY e.jugador;
+SELECT j.Nombre, SUM(e.Puntos_por_partido) as Puntos FROM estadisticas e, jugadores j WHERE e.jugador=j.codigo GROUP BY j.codigo;
+SELECT j.codigo, j.Nombre, COUNT(e.temporada) AS Temporadas_jugadas, 
+SUM(e.Puntos_por_partido) / COUNT(e.temporada) AS Promedio_puntos_por_partido, COUNT(e.temporada) * 82 AS Partidos_jugados, 
+(SUM(e.Puntos_por_partido) / COUNT(e.temporada)) * (COUNT(e.temporada) * 82) AS Total_puntos
+FROM jugadores j
+JOIN estadisticas e ON j.codigo = e.jugador
+GROUP BY j.codigo, j.Nombre;
 
 /*11. Mostrar el número de jugadores de cada equipo.*/
 SELECT e.Nombre, COUNT(j.Nombre_equipo) as Jugadores FROM equipos e, jugadores j WHERE e.Nombre=j.Nombre_equipo GROUP BY e.Nombre;
@@ -58,8 +64,6 @@ select codigo, equipo_local, equipo_visitante,
 case 
 when puntos_local>puntos_visitante then equipo_local 
 when puntos_visitante>puntos_local then equipo_visitante 
-else null end as Ganador
+else null end 
+as Ganador
 from partidos;
-
-/*SELECT codigo, equipo_local from partidos WHERE puntos_local>puntos_visitante;
-SELECT codigo, equipo_visitante from partidos WHERE puntos_visitante>puntos_local group by codigo;*/

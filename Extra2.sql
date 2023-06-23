@@ -82,15 +82,49 @@ SELECT DISTINCT c.nombre_cliente, e.nombre as Representante_ventas FROM cliente 
 
 /*4. Devuelve el nombre de los clientes que han hecho pagos y el nombre de sus representantes
 junto con la ciudad de la oficina a la que pertenece el representante.*/
-
+SELECT DISTINCT c.nombre_cliente, e.nombre as Representante_ventas, o.ciudad FROM cliente c, empleado e, pago p, oficina o WHERE e.codigo_empleado=c.codigo_empleado_rep_ventas AND p.codigo_cliente=c.codigo_cliente AND e.codigo_oficina=o.codigo_oficina;
 
 /*5. Devuelve el nombre de los clientes que no hayan hecho pagos y el nombre de sus
-representantes junto con la ciudad de la oficina a la que pertenece el representante.
-6. Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.
-7. Devuelve el nombre de los clientes y el nombre de sus representantes junto con la ciudad
-de la oficina a la que pertenece el representante.
-8. Devuelve un listado con el nombre de los empleados junto con el nombre de sus jefes.
-9. Devuelve el nombre de los clientes a los que no se les ha entregado a tiempo un pedido.
-10. Devuelve un listado de las diferentes gamas de producto que ha comprado cada cliente.*/
+representantes junto con la ciudad de la oficina a la que pertenece el representante.*/
+SELECT DISTINCT c.nombre_cliente, e.nombre as Representante_ventas, o.ciudad FROM cliente c INNER JOIN empleado e ON e.codigo_empleado=c.codigo_empleado_rep_ventas INNER JOIN oficina o ON e.codigo_oficina=o.codigo_oficina WHERE NOT EXISTS (SELECT * FROM pago p WHERE p.codigo_cliente=c.codigo_cliente);
+
+/*6. Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.*/
+SELECT o.linea_direccion1, o.linea_direccion2 FROM oficina o INNER JOIN cliente c, empleado e WHERE e.codigo_empleado=c.codigo_empleado_rep_ventas AND e.codigo_oficina=o.codigo_oficina AND c.ciudad LIKE 'Fuenlabrada';
+
+/*7. Devuelve el nombre de los clientes y el nombre de sus representantes junto con la ciudad
+de la oficina a la que pertenece el representante.*/
+SELECT c.nombre_cliente, e.nombre as Representante_ventas, o.ciudad FROM cliente c, empleado e, oficina o WHERE e.codigo_empleado=c.codigo_empleado_rep_ventas AND e.codigo_oficina=o.codigo_oficina;
+
+/*8. Devuelve un listado con el nombre de los empleados junto con el nombre de sus jefes.*/
+SELECT e.nombre as Nombre_empleado, e.apellido1 as Apellido_empleado, o.nombre as Nombre_jefe, o.apellido1 as Apellido_jefe FROM empleado e INNER JOIN (SELECT * FROM empleado) as o ON e.codigo_jefe=o.codigo_empleado;
+
+/*9. Devuelve el nombre de los clientes a los que no se les ha entregado a tiempo un pedido.*/
+SELECT DISTINCT c.nombre_cliente FROM cliente c INNER JOIN pedido p ON p.codigo_cliente=c.codigo_cliente WHERE fecha_entrega>fecha_esperada;
+
+/*10. Devuelve un listado de las diferentes gamas de producto que ha comprado cada cliente.*/
+SELECT DISTINCT p.gama FROM producto p INNER JOIN detalle_pedido d ON p.codigo_producto=d.codigo_producto INNER JOIN pedido pe ON pe.codigo_pedido=d.codigo_pedido INNER JOIN cliente c ON c.codigo_cliente=pe.codigo_cliente;
+
+/*Resuelva todas las consultas utilizando las cláusulas LEFT JOIN, RIGHT JOIN, JOIN.
+1. Devuelve un listado que muestre solamente los clientes que no han realizado ningún pago.*/
+SELECT * FROM cliente c LEFT JOIN pago p ON c.codigo_cliente=p.codigo_cliente WHERE NOT EXISTS (SELECT * FROM pago p WHERE c.codigo_cliente=p.codigo_cliente);
+
+/*2. Devuelve un listado que muestre solamente los clientes que no han realizado ningún
+pedido.*/
 
 
+/*3. Devuelve un listado que muestre los clientes que no han realizado ningún pago y los que
+no han realizado ningún pedido.
+4. Devuelve un listado que muestre solamente los empleados que no tienen una oficina
+asociada.
+5. Devuelve un listado que muestre solamente los empleados que no tienen un cliente
+asociado.
+6. Devuelve un listado que muestre los empleados que no tienen una oficina asociada y los
+que no tienen un cliente asociado.
+7. Devuelve un listado de los productos que nunca han aparecido en un pedido.
+8. Devuelve las oficinas donde no trabajan ninguno de los empleados que hayan sido los
+representantes de ventas de algún cliente que haya realizado la compra de algún producto
+de la gama Frutales.
+9. Devuelve un listado con los clientes que han realizado algún pedido, pero no han realizado
+ningún pago.
+10. Devuelve un listado con los datos de los empleados que no tienen clientes asociados y el
+nombre de su jefe asociado.*/
